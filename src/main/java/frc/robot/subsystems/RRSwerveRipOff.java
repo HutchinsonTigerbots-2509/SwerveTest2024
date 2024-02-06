@@ -31,7 +31,7 @@ public class RRSwerveRipOff {
 
     //Create SimpleMotorFeedForward for the translation motor on the swerve module
     //The static and feedforward gains should be passed into the class constructor vial the "tuningCals" array
-    private SimpleMotorFeedforward driveFeedForward;
+    // private SimpleMotorFeedforward driveFeedForward;
 
     //Create a PIDController for the control of the angular position of the swerve module
     private final PIDController m_rotationPIDController = new PIDController(ModuleConstants.kTurnPID[0], ModuleConstants.kTurnPID[1], ModuleConstants.kTurnPID[2]);
@@ -56,7 +56,7 @@ public class RRSwerveRipOff {
         //Set up you rotation encoder too, because I don't want to look that up either
 
         //Create SImpleMotorFeedForward for swerve module using the static and feedforward gains from the tuningVals array
-        SimpleMotorFeedforward driveFeedForward = new SimpleMotorFeedforward(tuningVals[0], tuningVals[1]);
+        //SimpleMotorFeedforward driveFeedForward = new SimpleMotorFeedforward(tuningVals[0], tuningVals[1]);
 
         //Creates the drive PIDController using the proportional gain from the tuningVals array
         m_drivePIDController = new PIDController(tuningVals[2], 0.0, 0.0);
@@ -78,7 +78,7 @@ public class RRSwerveRipOff {
     final double driveOutput = m_drivePIDController.calculate(getDriveVelocity(), state.speedMetersPerSecond);
     // Calculates the desired feedForward motor % from the current desired velocity
     // and the static and feedforward gains
-    final double driveFF = driveFeedForward.calculate(state.speedMetersPerSecond);
+    final double driveFF = 0;// driveFeedForward.calculate(state.speedMetersPerSecond);    // TODO THIS IS THE FUCKING PROBLEM
     // Set the drive motor to the sum of the feedforward calculation and PID
     // calculation
     final double finalDriveOutput = driveOutput + driveFF;

@@ -27,6 +27,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.motorcontrol.Talon;
@@ -75,6 +76,14 @@ public class Drivetrain extends SubsystemBase {
     frontRightTranslate, 
     rearLeftTranslate, 
     rearRightTranslate);
+
+  public void setModuleStates(SwerveModuleState[] desiredStates) {
+    SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, MotorConstants.kMaxSpeedMetersPerSecond);
+    m_frontLeft.setDesiredState(desiredStates[0]);
+    m_frontRight.setDesiredState(desiredStates[1]);
+    m_rearLeft.setDesiredState(desiredStates[2]);
+    m_rearRight.setDesiredState(desiredStates[3]);
+  }
   
   // Creates the odometry object from the kinematics object and the initial wheel
   // positions.
@@ -104,6 +113,22 @@ public class Drivetrain extends SubsystemBase {
 
   public void drive(double xSpeed, double ySpeed, double rot, boolean fieldRelative) {
     rot = performKeepAngle(xSpeed, ySpeed, rot);
+                                                     // depending on driver input
+
+    // SmartDashboard.putNumber("xSpeed Commanded", xSpeed);
+    // SmartDashboard.putNumber("ySpeed Commanded", ySpeed);
+
+    // creates an array of the desired swerve module states based on driver command
+    // and if the commands are field relative or not
+    var swerveModuleStates = m_kinematics.toSwerveModuleStates(
+        fieldRelative ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot, navx.getRotation2d())
+            : new ChassisSpeeds(xSpeed, ySpeed, rot));
+
+    // normalize wheel speeds so all individual states are scaled to achievable
+    // velocities
+    SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, MotorConstants.kMaxSpeedMetersPerSecond);
+
+    setModuleStates(swerveModuleStates);
   }
 
   public Rotation2d getGyro() {
