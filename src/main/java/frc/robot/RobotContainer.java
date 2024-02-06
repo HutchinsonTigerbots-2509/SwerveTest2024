@@ -31,10 +31,6 @@ public class RobotContainer {
   // Joystick Buttons
   
 
-  // Drivetrain
-  private final TeleDrive m_drive = new TeleDrive(sDriveTrain, DriverController);
-  
-
   // Replace with CommandPS4Controller or CommandJoystick if needed
   // private final CommandXboxController m_driverController =
   //     new CommandXboxController(OperatorConstants.kDriverContro  llerPort);
@@ -44,7 +40,7 @@ public class RobotContainer {
 
     // Configure the Button bindings
     configureBindings();
-    sDriveTrain.setDefaultCommand(m_drive);
+    sDriveTrain.setDefaultCommand(new TeleDrive(sDriveTrain, DriverController));
   }
 
   /**
